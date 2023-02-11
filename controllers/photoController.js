@@ -10,33 +10,22 @@ const autorization = {
   headers: { Authorization: accessKey },
 };
 
-export const getAllPhotos = async () => {
-  const url = `${baseUrl}/photos`;
-  try {
-    const response = await axios.get(url, autorization);
+export const getPhotos = async (params) => {
+  let url = `${baseUrl}/photos`;
 
-    if (response.status === 200) {
-      return response.data;
-    }
-    const message = response.data.erros;
-    throw new Error(`Api fetch failed. Error: ${message}`);
-  } catch (error) {
-    throw new Error(`Error while fetching photos. Error: ${error}`);
+  if (params) {
+    const { id, username } = params;
+    if (id) url = `${baseUrl}/photos/${id}`;
+    if (username) url = `${baseUrl}/search/photos?query=${username}`;
   }
-};
-
-export const getPhotoById = async (id) => {
-  const url = `${baseUrl}/photos/${id}`;
 
   try {
     const response = await axios.get(url, autorization);
-
-    if (response.status === 200) {
-      return response.data;
-    }
-    const message = response.data.erros;
-    throw new Error(`Api fetch failed. Error: ${message}`);
+    return response.data;
   } catch (error) {
-    throw new Error(`Error while fetching photos. Error: ${error}`);
+    throw {
+      status: error.response.status,
+      message: error.response.data?.errors[0],
+    };
   }
 };
