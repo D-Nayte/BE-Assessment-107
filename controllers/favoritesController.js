@@ -1,2 +1,34 @@
 //Import asyncHandler so that we can use it in our routes to trigger error handling middleware
-const asyncHandler = require("express-async-handler");
+import asyncHandler from "express-async-handler";
+import FavPhotos from "../models/favoritePhotoModel.js";
+import UserModel from "../models/userModel.js";
+
+export const storeNewPhoto = asyncHandler(async (req, res) => {
+  const { body } = req;
+  let { photoUrl, description, username, explanation } = body;
+  const { id } = req.token;
+
+  if (!username || !photoUrl)
+    return res
+      .status(403)
+      .json({ message: "Username or photo URL is missing" });
+  if (!description) description = "No description";
+  if (!explanation) explanation = "No explanation";
+
+  const userProfile = await UserModel.findById(id);
+  if (!userProfile)
+    return res.status(403).json({ message: "Profile not found" });
+
+  const favPhoto = {
+    user: userProfile._id.toString(),
+    url: photoUrl,
+    username,
+    description,
+    explanation,
+  };
+
+  await FavPhotos.create(favPhoto);
+
+  delete favPhoto.user;
+  res.status(201).json(favPhoto);
+});
