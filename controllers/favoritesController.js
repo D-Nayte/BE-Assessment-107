@@ -15,12 +15,8 @@ export const storeNewPhoto = asyncHandler(async (req, res) => {
   if (!description) description = "No description";
   if (!explanation) explanation = "No explanation";
 
-  const userProfile = await UserModel.findById(id);
-  if (!userProfile)
-    return res.status(403).json({ message: "Profile not found" });
-
   const favPhoto = {
-    user: userProfile._id.toString(),
+    user: id,
     url: photoUrl,
     username,
     description,
