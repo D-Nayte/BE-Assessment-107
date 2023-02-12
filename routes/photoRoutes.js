@@ -23,7 +23,7 @@ router.get("/user/:username", async (req, res) => {
     res.json(photoList);
   } catch (error) {
     console.error("Failed to fetch photos by username", error);
-    res.status(500).json({ status: error.status, message: error.message });
+    res.status(error.status).json({ message: error.message });
   }
 });
 
