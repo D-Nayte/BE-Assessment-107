@@ -28,10 +28,25 @@ export const storeNewPhoto = async (req, res) => {
   res.status(201).json(favPhoto);
 };
 
-export const getPhotocollection = asyncHandler(async (req, res) => {
+export const getPhotocollection = asyncHandler(async (req, res, next) => {
   const { id } = req.token;
 
-  const allPhotos = await FavPhotos.find({ user: id });
+  const myPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject("Error: Fetch request failed.");
+    }, 100);
+  });
+
+  try {
+    const test = await myPromise;
+    console.log("sucess");
+  } catch (error) {
+    // console.log("error", error);
+    next(error);
+  }
+
+  return;
+  const allPhotos = await FavPhotos.findById({});
   if (allPhotos.length < 1)
     return res.status(404).json({ messsage: "No photos found" });
   res.json(allPhotos);
