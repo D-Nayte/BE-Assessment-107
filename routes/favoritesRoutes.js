@@ -19,6 +19,4 @@ router.delete("/", deletePhotoById);
 
 router.patch("/", changeDescription);
 
-// router.use(errorHandler);
-
 export { router as favRouter };

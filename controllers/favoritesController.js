@@ -2,7 +2,7 @@
 import asyncHandler from "express-async-handler";
 import FavPhotos from "../models/favoritePhotoModel.js";
 
-export const storeNewPhoto = async (req, res) => {
+export const storeNewPhoto = asyncHandler(async (req, res) => {
   const { body } = req;
   let { photoUrl, description, username, explanation } = body;
   const { id } = req.token;
@@ -26,29 +26,16 @@ export const storeNewPhoto = async (req, res) => {
 
   delete favPhoto.user;
   res.status(201).json(favPhoto);
-};
+});
 
 export const getPhotocollection = asyncHandler(async (req, res, next) => {
   const { id } = req.token;
 
-  const myPromise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject("Error: Fetch request failed.");
-    }, 100);
-  });
+  const allPhotos = await FavPhotos.find({ user: id });
 
-  try {
-    const test = await myPromise;
-    console.log("sucess");
-  } catch (error) {
-    // console.log("error", error);
-    next(error);
-  }
-
-  return;
-  const allPhotos = await FavPhotos.findById({});
-  if (allPhotos.length < 1)
+  if (!allPhotos || allPhotos.length < 1)
     return res.status(404).json({ messsage: "No photos found" });
+
   res.json(allPhotos);
 });
 
